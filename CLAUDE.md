@@ -22,5 +22,7 @@ Every user-owned table has: client-generated `id` (UUID), `user_id`, `created_at
 ## Commands
 
 - API tests: `dotnet test api/Pinball.slnx`
+- Mobile tests and typecheck (from `mobile/`): `npm test`, `npm run typecheck`
+- Add a mobile dependency: `npx expo install <package>` (picks SDK-compatible versions; never plain `npm install <package>`)
 - Local Postgres: `docker compose up -d`
 - New migration: `dotnet ef migrations add <Name> -p api/src/Modules/<Module>/Pinball.Modules.<Module> -s api/src/Pinball.Api -c <Module>DbContext`

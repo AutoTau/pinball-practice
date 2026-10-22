@@ -1,0 +1,17 @@
+#!/bin/sh
+# Blocks commits Monday–Friday, 08:00–16:59 Pacific.
+# Uses a POSIX TZ rule because Git for Windows ships no zoneinfo (see decisions.md #25).
+
+PACIFIC='PST8PDT,M3.2.0,M11.1.0'
+
+day=$(TZ="$PACIFIC" date +%u)    # 1 = Monday … 7 = Sunday
+hour=$(TZ="$PACIFIC" date +%H)
+hour=${hour#0}                   # strip leading zero so 08/09 aren't read as octal
+
+if [ "$day" -le 5 ] && [ "${hour:-0}" -ge 8 ] && [ "${hour:-0}" -lt 17 ]; then
+    echo "pre-commit: commits are blocked Monday-Friday, 8am-5pm Pacific." >&2
+    echo "pre-commit: it is now $(TZ="$PACIFIC" date '+%a %H:%M %Z')." >&2
+    exit 1
+fi
+
+exit 0

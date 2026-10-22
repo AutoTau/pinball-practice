@@ -21,6 +21,6 @@ Every user-owned table has: client-generated `id` (UUID), `user_id`, `created_at
 
 ## Commands
 
-- API tests: `dotnet test api/Pinball.sln`
+- API tests: `dotnet test api/Pinball.slnx`
 - Local Postgres: `docker compose up -d`
 - New migration: `dotnet ef migrations add <Name> -p api/src/Modules/<Module>/Pinball.Modules.<Module> -s api/src/Pinball.Api -c <Module>DbContext`

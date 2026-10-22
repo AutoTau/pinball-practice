@@ -6,6 +6,7 @@ This file is the source of truth from 2026-10-21 onward; new rows go at the top 
 
 | # | Date | Decision | Alternatives considered | Why | Revisit if | Status |
 | --- | --- | --- | --- | --- | --- | --- |
+| 26 | 2026-10-21 | Expo (managed workflow, TypeScript) for the mobile app | Bare React Native CLI | The React Native docs recommend a framework, naming Expo, for new apps, so it's the mainstream choice. EAS cloud builds produce iOS and TestFlight builds from Windows without a Mac | A native module Expo can't support through a config plugin or dev build | Decided |
 | 25 | 2026-10-21 | Commit hook computes Pacific time from a POSIX TZ rule (`PST8PDT,M3.2.0,M11.1.0`) | IANA name `America/Los_Angeles`; a PowerShell or Node hook | Git for Windows ships no zoneinfo, so the IANA name silently falls back to UTC. The POSIX rule needs no tz database and runs in plain `sh` on every platform | US daylight-saving rules change | Decided |
 | 24 | 2026-10-21 | `user_id` repeated on every synced child table (games, balls, notes) | Derive ownership through joins to sessions | Each table's pull is one indexed query on `(user_id, sync_seq)`, and authorization checks need no joins | Shared data across users is added | Decided |
 | 23 | 2026-10-21 | `drain_reason` stored as text, validated in code | Postgres enum; lookup table | The drain chip list will change with tester feedback; altering Postgres enums is awkward and a lookup table adds sync work | The list stabilizes and needs per-reason metadata | Decided |

@@ -12,7 +12,7 @@ Pinball practice tracker: offline-first React Native app plus an ASP.NET Core mo
 ## Layout
 
 - `api/` — .NET solution. `src/Pinball.Api` is the host (composition only). Each module in `src/Modules/<Name>` owns its own Postgres schema, DbContext and migrations; modules never reference each other's internals and there are no cross-module foreign keys.
-- `mobile/` — Expo + TypeScript app. SQLite on the device is the source of truth.
+- `mobile/` — Expo + TypeScript app. SQLite on the device is the source of truth. Read `mobile/AGENTS.md` before any Expo or React Native work.
 - `.githooks/` — shared git hooks. One-time setup per clone: `git config core.hooksPath .githooks`.
 
 ## Sync conventions

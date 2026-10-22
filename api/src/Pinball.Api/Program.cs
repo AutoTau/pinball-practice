@@ -1,6 +1,11 @@
+using Pinball.Modules.Catalog;
+using Pinball.Modules.Sessions;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddOpenApi();
+builder.Services.AddCatalogModule(builder.Configuration);
+builder.Services.AddSessionsModule(builder.Configuration);
 
 var app = builder.Build();
 

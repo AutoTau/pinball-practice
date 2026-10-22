@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  api:
+    name: API tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: api
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore
+        run: dotnet restore Pinball.slnx
+
+      - name: Build
+        run: dotnet build Pinball.slnx --no-restore --configuration Release
+
+      # Integration tests start Postgres with Testcontainers; the runner has Docker.
+      - name: Test
+        run: dotnet test Pinball.slnx --no-build --configuration Release --logger trx --results-directory TestResults
+
+      - name: Check migrations match the model
+        run: |
+          dotnet tool restore
+          dotnet ef migrations has-pending-model-changes -p src/Modules/Catalog/Pinball.Modules.Catalog -s src/Pinball.Api -c CatalogDbContext
+          dotnet ef migrations has-pending-model-changes -p src/Modules/Sessions/Pinball.Modules.Sessions -s src/Pinball.Api -c PracticeDbContext
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: api-test-results
+          path: api/TestResults

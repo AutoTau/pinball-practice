@@ -64,5 +64,18 @@ jobs:
       - name: Typecheck
         run: npm run typecheck
 
+      - name: Lint
+        run: npm run lint
+
       - name: Test
         run: npm test -- --ci
+
+  api-image:
+    name: API image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Builds only; nothing is pushed or deployed (CLAUDE.md: AWS and DevOps stay read-only).
+      - name: Build
+        run: docker build --tag pinball-api:${{ github.sha }} api

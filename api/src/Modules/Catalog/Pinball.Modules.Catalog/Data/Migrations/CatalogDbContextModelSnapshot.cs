@@ -21,6 +21,7 @@ namespace Pinball.Modules.Catalog.Data.Migrations
                 .HasAnnotation("ProductVersion", "10.0.13")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
+            NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "pg_trgm");
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("Pinball.Modules.Catalog.Domain.Edition", b =>
@@ -28,6 +29,26 @@ namespace Pinball.Modules.Catalog.Data.Migrations
                     b.Property<string>("OpdbMachineId")
                         .HasColumnType("text")
                         .HasColumnName("opdb_machine_id");
+
+                    b.Property<string>("BobsGuideUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("bobs_guide_url");
+
+                    b.Property<string>("Display")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("display");
+
+                    b.Property<string>("ImageMediumUrl")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("image_medium_url");
+
+                    b.Property<string>("ImageSmallUrl")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("image_small_url");
 
                     b.Property<string>("Manufacturer")
                         .HasMaxLength(100)
@@ -45,14 +66,37 @@ namespace Pinball.Modules.Catalog.Data.Migrations
                         .HasColumnType("text")
                         .HasColumnName("opdb_group_id");
 
+                    b.Property<bool>("PhysicalMachine")
+                        .HasColumnType("boolean")
+                        .HasColumnName("physical_machine");
+
+                    b.Property<string>("PinballPrimerUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("pinball_primer_url");
+
+                    b.Property<string>("PinballRulesUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("pinball_rules_url");
+
+                    b.Property<DateTimeOffset?>("RetiredAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("retired_at");
+
+                    b.Property<string>("ShortName")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("short_name");
+
+                    b.Property<string>("Type")
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)")
+                        .HasColumnName("type");
+
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
-
-                    b.Property<string>("Variant")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("variant");
 
                     b.Property<short?>("Year")
                         .HasColumnType("smallint")
@@ -73,6 +117,16 @@ namespace Pinball.Modules.Catalog.Data.Migrations
                         .HasColumnType("text")
                         .HasColumnName("opdb_alias_id");
 
+                    b.Property<string>("ImageMediumUrl")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("image_medium_url");
+
+                    b.Property<string>("ImageSmallUrl")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("image_small_url");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -84,6 +138,27 @@ namespace Pinball.Modules.Catalog.Data.Migrations
                         .HasColumnType("text")
                         .HasColumnName("opdb_machine_id");
 
+                    b.Property<bool>("PhysicalMachine")
+                        .HasColumnType("boolean")
+                        .HasColumnName("physical_machine");
+
+                    b.Property<DateTimeOffset?>("RetiredAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("retired_at");
+
+                    b.Property<string>("ShortName")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("short_name");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<short?>("Year")
+                        .HasColumnType("smallint")
+                        .HasColumnName("year");
+
                     b.HasKey("OpdbAliasId")
                         .HasName("pk_edition_aliases");
 
@@ -91,6 +166,55 @@ namespace Pinball.Modules.Catalog.Data.Migrations
                         .HasDatabaseName("ix_edition_aliases_opdb_machine_id");
 
                     b.ToTable("edition_aliases", "catalog");
+                });
+
+            modelBuilder.Entity("Pinball.Modules.Catalog.Domain.OpdbImport", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Error")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("error");
+
+                    b.Property<DateTimeOffset?>("FinishedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("finished_at");
+
+                    b.Property<string>("Outcome")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("outcome");
+
+                    b.Property<int>("Retired")
+                        .HasColumnType("integer")
+                        .HasColumnName("retired");
+
+                    b.Property<DateTimeOffset?>("SourceLastModified")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("source_last_modified");
+
+                    b.Property<DateTimeOffset>("StartedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("started_at");
+
+                    b.Property<int>("Upserted")
+                        .HasColumnType("integer")
+                        .HasColumnName("upserted");
+
+                    b.HasKey("Id")
+                        .HasName("pk_opdb_imports");
+
+                    b.HasIndex("StartedAt")
+                        .HasDatabaseName("ix_opdb_imports_started_at");
+
+                    b.ToTable("opdb_imports", "catalog");
                 });
 
             modelBuilder.Entity("Pinball.Modules.Catalog.Domain.TitleGroup", b =>
@@ -104,6 +228,15 @@ namespace Pinball.Modules.Catalog.Data.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)")
                         .HasColumnName("name");
+
+                    b.Property<DateTimeOffset?>("RetiredAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("retired_at");
+
+                    b.Property<string>("ShortName")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("short_name");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")

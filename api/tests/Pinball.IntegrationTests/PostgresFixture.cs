@@ -8,9 +8,7 @@ namespace Pinball.IntegrationTests;
 /// <summary>Starts one Postgres container per test run and applies every module's migrations.</summary>
 public sealed class PostgresFixture : IAsyncLifetime
 {
-    private readonly PostgreSqlContainer _container = new PostgreSqlBuilder()
-        .WithImage("postgres:17-alpine")
-        .Build();
+    private readonly PostgreSqlContainer _container = new PostgreSqlBuilder("postgres:17-alpine").Build();
 
     public string ConnectionString => _container.GetConnectionString();
 

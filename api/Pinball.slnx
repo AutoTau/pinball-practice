@@ -13,5 +13,6 @@
   <Folder Name="/tests/">
     <Project Path="tests/Pinball.Architecture.Tests/Pinball.Architecture.Tests.csproj" />
     <Project Path="tests/Pinball.IntegrationTests/Pinball.IntegrationTests.csproj" />
+    <Project Path="tests/Pinball.Modules.Catalog.Tests/Pinball.Modules.Catalog.Tests.csproj" />
   </Folder>
 </Solution>

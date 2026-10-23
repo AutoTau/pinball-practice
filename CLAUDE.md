@@ -17,12 +17,12 @@ Pinball practice tracker: offline-first React Native app plus an ASP.NET Core mo
 
 ## Sync conventions
 
-Every user-owned table has: client-generated `id` (UUID), `user_id`, `created_at`, `updated_at` (last-write-wins), `deleted_at` (soft delete; never hard-delete synced rows) and a server-assigned `sync_seq` used as the pull cursor.
+Every user-owned table has: client-generated `id` (UUID), `user_id`, `created_at`, `updated_at` (last-write-wins), `deleted_at` (soft delete; never hard-delete synced rows) and `sync_xid`, the ID of the transaction that last wrote the row, which the pull cursor is built on (see `docs/api/sync.md`).
 
 ## Commands
 
 - API tests: `dotnet test api/Pinball.slnx`
-- Mobile tests and typecheck (from `mobile/`): `npm test`, `npm run typecheck`
+- Mobile checks (from `mobile/`): `npm test`, `npm run typecheck`, `npm run lint`; CI runs all three
 - Add a mobile dependency: `npx expo install <package>` (picks SDK-compatible versions; never plain `npm install <package>`)
 - Local Postgres: `docker compose up -d`
 - New migration: `dotnet ef migrations add <Name> -p api/src/Modules/<Module>/Pinball.Modules.<Module> -s api/src/Pinball.Api -c <Module>DbContext`

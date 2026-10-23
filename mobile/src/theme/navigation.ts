@@ -15,5 +15,13 @@ export function headerOptions(colors: Palette) {
   } as const;
 }
 
-/** For screens whose backglass art fills the top: the header floats over it with white controls. */
-export const overArtHeader = { headerTransparent: true, title: '', headerTintColor: '#ffffff' } as const;
+/**
+ * For screens whose backglass art fills the top: the header floats over it with white controls. The
+ * background must be cleared explicitly, or the shared headerStyle paints a solid bar over the art.
+ */
+export const overArtHeader = {
+  headerTransparent: true,
+  headerStyle: { backgroundColor: 'transparent' },
+  title: '',
+  headerTintColor: '#ffffff',
+} as const;

@@ -182,6 +182,13 @@ The biggest risk is that logging stays too slow and players fall back to recordi
 - [ ] Draft the Milestone 1 screens and the database schema
 - [ ] Create both repos with CI running on the first commit
 
+## Backlog
+
+Ideas worth building, not yet scheduled into a milestone.
+
+- **App shell: tab bar and headers** (requested 2026-10-22). Once there's more than the Practice screen, add bottom tabs (likely Practice, Machines, Stats, Profile) with Expo Router's tab layout, a consistent screen header, and arcade styling on the tab bar. The art-header screens (session, machine, stats) keep their transparent headers on top of the tab stack.
+- **Location from GPS** (requested 2026-10-22). When setting up a machine, suggest the venue the player is standing in instead of typing it. Candidate source: Pinball Map's public API, which lists venues with coordinates and the machines at each, so it could also pre-select the machine. Needs location permission (asked only on the setup screen) and a decision on whether venues become a table of their own rather than the current free-text `location_name`.
+
 ## Sources
 
 - [PinProf listing](https://appshunter.io/ios/app/pinprof/id6758810754)

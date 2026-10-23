@@ -25,6 +25,7 @@ import {
   updateBall,
 } from '@/data/practice';
 import { clock, db } from '@/db/client';
+import { useSync } from '@/sync/SyncProvider';
 import { DRAIN_REASONS, type DrainReason } from '@/domain/drainReasons';
 import { formatScore, parseScore, scoreDigits } from '@/domain/score';
 import { makeStyles, radius, space, TAP_TARGET, type, useTheme } from '@/theme';
@@ -32,6 +33,7 @@ import { makeStyles, radius, space, TAP_TARGET, type, useTheme } from '@/theme';
 /** Logging a ball: type the score on the display, tap why it drained. */
 export default function SessionScreen() {
   const s = useStyles();
+  const { requestSync } = useSync();
   const { id } = useLocalSearchParams<{ id: string }>();
   // The data layer is synchronous; bumping this re-reads it after every write.
   const [, refresh] = useReducer((n: number) => n + 1, 0);
@@ -76,7 +78,7 @@ export default function SessionScreen() {
       />
 
       {game ? (
-        <GameLogger key={game.id} gameId={game.id} gameNumber={game.gameNumber} run={run} error={error} />
+        <GameLogger key={game.id} gameId={game.id} gameNumber={game.gameNumber} run={run} error={error} onGameEnded={requestSync} />
       ) : (
         <>
           {games.length > 0 ? (
@@ -109,6 +111,7 @@ export default function SessionScreen() {
                   variant="secondary"
                   onPress={() => {
                     endSession(db, clock, session.id);
+                    requestSync();
                     router.back();
                   }}
                 />
@@ -130,7 +133,14 @@ export default function SessionScreen() {
   );
 }
 
-function GameLogger(props: { gameId: string; gameNumber: number; run: (action: () => void) => void; error: string | null }) {
+function GameLogger(props: {
+  gameId: string;
+  gameNumber: number;
+  run: (action: () => void) => void;
+  error: string | null;
+  /** Called after the game ends, e.g. to sync it. */
+  onGameEnded: () => void;
+}) {
   const s = useStyles();
   const { colors } = useTheme();
   const { gameId, run } = props;
@@ -288,7 +298,10 @@ function GameLogger(props: { gameId: string; gameNumber: number; run: (action: (
       <Button
         title={`End game · ${formatScore(progress.lastScore)}`}
         variant={waitingToEnd ? 'primary' : 'secondary'}
-        onPress={() => run(() => endGame(db, clock, gameId))}
+        onPress={() => {
+          run(() => endGame(db, clock, gameId));
+          props.onGameEnded();
+        }}
       />
 
       {balls.length > 0 ? (

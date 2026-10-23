@@ -8,9 +8,11 @@ import { useEffect } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
+import { AuthProvider } from '@/auth/AuthProvider';
 import { apiUrl } from '@/config';
 import { refreshCatalog } from '@/data/catalog';
 import { db, expoDb } from '@/db/client';
+import { SyncProvider } from '@/sync/SyncProvider';
 import { headerOptions, overArtHeader, useTheme } from '@/theme';
 
 import migrations from '../../drizzle/migrations';
@@ -40,14 +42,19 @@ export default function RootLayout() {
   // GestureHandlerRootView lets charts respond to press-and-hold.
   return (
     <GestureHandlerRootView style={styles.root}>
-      <Stack screenOptions={{ ...headerOptions(colors), contentStyle: { backgroundColor: colors.background } }}>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false, title: 'Home' }} />
-        <Stack.Screen name="session/new" options={{ title: 'Pick a machine', presentation: 'modal' }} />
-        <Stack.Screen name="machine/new" options={overArtHeader} />
-        <Stack.Screen name="machine/[id]" options={overArtHeader} />
-        <Stack.Screen name="session/[id]" options={overArtHeader} />
-        <Stack.Screen name="game/[id]" options={overArtHeader} />
-      </Stack>
+      <AuthProvider>
+        <SyncProvider>
+          <Stack screenOptions={{ ...headerOptions(colors), contentStyle: { backgroundColor: colors.background } }}>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false, title: 'Home' }} />
+            <Stack.Screen name="session/new" options={{ title: 'Pick a machine', presentation: 'modal' }} />
+            <Stack.Screen name="machine/new" options={overArtHeader} />
+            <Stack.Screen name="machine/[id]" options={overArtHeader} />
+            <Stack.Screen name="session/[id]" options={overArtHeader} />
+            <Stack.Screen name="game/[id]" options={overArtHeader} />
+            <Stack.Screen name="auth" options={{ headerShown: false }} />
+          </Stack>
+        </SyncProvider>
+      </AuthProvider>
       <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
     </GestureHandlerRootView>
   );

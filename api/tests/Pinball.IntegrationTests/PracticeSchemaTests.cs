@@ -8,18 +8,48 @@ namespace Pinball.IntegrationTests;
 public class PracticeSchemaTests(PostgresFixture db)
 {
     [Fact]
-    public async Task Insert_and_update_each_take_a_higher_sync_seq()
+    public async Task Insert_and_update_are_stamped_with_their_transaction_id()
     {
         await using var ctx = db.CreatePractice();
         var (_, _, game) = await SeedGameAsync(ctx);
 
-        var inserted = game.SyncSeq;
+        var inserted = game.SyncXid;
         game.FinalScore = 1_000_000;
         game.UpdatedAt = DateTimeOffset.UtcNow;
         await ctx.SaveChangesAsync();
 
         Assert.True(inserted > 0);
-        Assert.True(game.SyncSeq > inserted);
+        Assert.True(game.SyncXid > inserted);
+    }
+
+    // The guarantee behind the pull cursor (decision 32): while an older transaction is still open, a row
+    // committed by a newer one sits at or above the pull boundary, so no pull can hand it out and step past
+    // the older transaction's rows.
+    [Fact]
+    public async Task Rows_committed_after_a_still_open_transaction_stay_above_the_pull_boundary()
+    {
+        await using var slow = db.CreatePractice();
+        await using var fast = db.CreatePractice();
+        var (user, session, _) = await SeedGameAsync(fast);
+
+        await using (await slow.Database.BeginTransactionAsync())
+        {
+            slow.Games.Add(NewGame(user, session, gameNumber: 2));
+            await slow.SaveChangesAsync();
+
+            var late = NewGame(user, session, gameNumber: 3);
+            fast.Games.Add(late);
+            await fast.SaveChangesAsync();
+
+            var aboveBoundary = await fast.Database
+                .SqlQuery<bool>($"""
+                    SELECT g.sync_xid >= pg_snapshot_xmin(pg_current_snapshot()) AS "Value"
+                    FROM practice.games g WHERE g.id = {late.Id}
+                    """)
+                .SingleAsync();
+
+            Assert.True(aboveBoundary);
+        }
     }
 
     [Fact]
@@ -84,19 +114,25 @@ public class PracticeSchemaTests(PostgresFixture db)
             CreatedAt = now,
             UpdatedAt = now,
         };
-        var game = new Game
-        {
-            Id = Guid.NewGuid(),
-            UserId = user.Id,
-            SessionId = session.Id,
-            GameNumber = 1,
-            CreatedAt = now,
-            UpdatedAt = now,
-        };
+        var game = NewGame(user, session, gameNumber: 1);
 
         ctx.AddRange(user, machine, session, game);
         await ctx.SaveChangesAsync();
         return (user, session, game);
+    }
+
+    private static Game NewGame(User user, Session session, short gameNumber)
+    {
+        var now = DateTimeOffset.UtcNow;
+        return new Game
+        {
+            Id = Guid.NewGuid(),
+            UserId = user.Id,
+            SessionId = session.Id,
+            GameNumber = gameNumber,
+            CreatedAt = now,
+            UpdatedAt = now,
+        };
     }
 
     private static Ball NewBall(User user, Game game, short sequence, long score, bool deleted = false)

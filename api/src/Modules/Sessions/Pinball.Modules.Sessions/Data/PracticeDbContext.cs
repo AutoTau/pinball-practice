@@ -9,9 +9,6 @@ public class PracticeDbContext(DbContextOptions<PracticeDbContext> options) : Db
 {
     public const string Schema = "practice";
 
-    /// <summary>Shared by every synced table, so one cursor covers a whole pull.</summary>
-    public const string SyncSequence = "sync_seq";
-
     public DbSet<User> Users => Set<User>();
     public DbSet<MachineInstance> MachineInstances => Set<MachineInstance>();
     public DbSet<Session> Sessions => Set<Session>();
@@ -22,7 +19,6 @@ public class PracticeDbContext(DbContextOptions<PracticeDbContext> options) : Db
     protected override void OnModelCreating(ModelBuilder model)
     {
         model.HasDefaultSchema(Schema);
-        model.HasSequence<long>(SyncSequence);
 
         model.Entity<User>(e =>
         {

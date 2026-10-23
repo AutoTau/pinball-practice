@@ -23,8 +23,6 @@ namespace Pinball.Modules.Sessions.Data.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.HasSequence("sync_seq");
-
             modelBuilder.Entity("Pinball.Modules.Sessions.Domain.Ball", b =>
                 {
                     b.Property<Guid>("Id")
@@ -64,10 +62,10 @@ namespace Pinball.Modules.Sessions.Data.Migrations
                         .HasColumnType("smallint")
                         .HasColumnName("sequence");
 
-                    b.Property<long>("SyncSeq")
+                    b.Property<ulong>("SyncXid")
                         .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("bigint")
-                        .HasColumnName("sync_seq");
+                        .HasColumnType("xid8")
+                        .HasColumnName("sync_xid");
 
                     b.Property<bool>("Tilted")
                         .HasColumnType("boolean")
@@ -88,8 +86,8 @@ namespace Pinball.Modules.Sessions.Data.Migrations
                         .IsUnique()
                         .HasDatabaseName("ix_balls_game_id_sequence");
 
-                    b.HasIndex("UserId", "SyncSeq")
-                        .HasDatabaseName("ix_balls_user_id_sync_seq");
+                    b.HasIndex("UserId", "SyncXid", "Id")
+                        .HasDatabaseName("ix_balls_user_id_sync_xid_id");
 
                     b.ToTable("balls", "practice", t =>
                         {
@@ -129,10 +127,10 @@ namespace Pinball.Modules.Sessions.Data.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("session_id");
 
-                    b.Property<long>("SyncSeq")
+                    b.Property<ulong>("SyncXid")
                         .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("bigint")
-                        .HasColumnName("sync_seq");
+                        .HasColumnType("xid8")
+                        .HasColumnName("sync_xid");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
@@ -148,8 +146,8 @@ namespace Pinball.Modules.Sessions.Data.Migrations
                     b.HasIndex("SessionId")
                         .HasDatabaseName("ix_games_session_id");
 
-                    b.HasIndex("UserId", "SyncSeq")
-                        .HasDatabaseName("ix_games_user_id_sync_seq");
+                    b.HasIndex("UserId", "SyncXid", "Id")
+                        .HasDatabaseName("ix_games_user_id_sync_xid_id");
 
                     b.ToTable("games", "practice", t =>
                         {
@@ -198,10 +196,10 @@ namespace Pinball.Modules.Sessions.Data.Migrations
                         .HasColumnType("character varying(50)")
                         .HasColumnName("opdb_machine_id");
 
-                    b.Property<long>("SyncSeq")
+                    b.Property<ulong>("SyncXid")
                         .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("bigint")
-                        .HasColumnName("sync_seq");
+                        .HasColumnType("xid8")
+                        .HasColumnName("sync_xid");
 
                     b.Property<short?>("TiltWarnings")
                         .HasColumnType("smallint")
@@ -218,8 +216,8 @@ namespace Pinball.Modules.Sessions.Data.Migrations
                     b.HasKey("Id")
                         .HasName("pk_machine_instances");
 
-                    b.HasIndex("UserId", "SyncSeq")
-                        .HasDatabaseName("ix_machine_instances_user_id_sync_seq");
+                    b.HasIndex("UserId", "SyncXid", "Id")
+                        .HasDatabaseName("ix_machine_instances_user_id_sync_xid_id");
 
                     b.ToTable("machine_instances", "practice", t =>
                         {
@@ -255,10 +253,10 @@ namespace Pinball.Modules.Sessions.Data.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("game_id");
 
-                    b.Property<long>("SyncSeq")
+                    b.Property<ulong>("SyncXid")
                         .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("bigint")
-                        .HasColumnName("sync_seq");
+                        .HasColumnType("xid8")
+                        .HasColumnName("sync_xid");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
@@ -277,8 +275,8 @@ namespace Pinball.Modules.Sessions.Data.Migrations
                     b.HasIndex("GameId")
                         .HasDatabaseName("ix_notes_game_id");
 
-                    b.HasIndex("UserId", "SyncSeq")
-                        .HasDatabaseName("ix_notes_user_id_sync_seq");
+                    b.HasIndex("UserId", "SyncXid", "Id")
+                        .HasDatabaseName("ix_notes_user_id_sync_xid_id");
 
                     b.ToTable("notes", "practice", t =>
                         {
@@ -331,10 +329,10 @@ namespace Pinball.Modules.Sessions.Data.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("started_at");
 
-                    b.Property<long>("SyncSeq")
+                    b.Property<ulong>("SyncXid")
                         .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("bigint")
-                        .HasColumnName("sync_seq");
+                        .HasColumnType("xid8")
+                        .HasColumnName("sync_xid");
 
                     b.Property<short?>("TiltWarnings")
                         .HasColumnType("smallint")
@@ -354,8 +352,8 @@ namespace Pinball.Modules.Sessions.Data.Migrations
                     b.HasIndex("MachineInstanceId")
                         .HasDatabaseName("ix_sessions_machine_instance_id");
 
-                    b.HasIndex("UserId", "SyncSeq")
-                        .HasDatabaseName("ix_sessions_user_id_sync_seq");
+                    b.HasIndex("UserId", "SyncXid", "Id")
+                        .HasDatabaseName("ix_sessions_user_id_sync_xid_id");
 
                     b.ToTable("sessions", "practice", t =>
                         {

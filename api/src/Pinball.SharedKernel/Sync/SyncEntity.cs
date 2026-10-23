@@ -1,7 +1,7 @@
 namespace Pinball.SharedKernel.Sync;
 
 /// <summary>
-/// Base for every user-owned record that syncs with the phone (decisions 5, 17, 20).
+/// Base for every user-owned record that syncs with the phone (decisions 5, 17, 32).
 /// </summary>
 public abstract class SyncEntity
 {
@@ -18,6 +18,9 @@ public abstract class SyncEntity
     /// <summary>Soft delete. Synced rows are never hard-deleted.</summary>
     public DateTimeOffset? DeletedAt { get; set; }
 
-    /// <summary>Server-assigned on every insert and update; clients pull rows above their cursor.</summary>
-    public long SyncSeq { get; private set; }
+    /// <summary>
+    /// ID of the transaction that last wrote the row, set by a database trigger. Pulls return rows whose
+    /// transaction finished before every still-running one, so nothing can appear behind a cursor later.
+    /// </summary>
+    public ulong SyncXid { get; private set; }
 }

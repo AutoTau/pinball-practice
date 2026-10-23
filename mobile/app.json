@@ -38,11 +38,21 @@
         }
       ],
       "expo-image",
-      "expo-font"
+      "expo-font",
+      "expo-secure-store",
+      "expo-web-browser"
     ],
     "scheme": "pinballpractice",
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "auth": {
+        "region": "us-west-2",
+        "domain": "https://us-west-2pasrrojo7.auth.us-west-2.amazoncognito.com",
+        "userPoolId": "us-west-2_pASrrOjo7",
+        "clientId": "2mjk3k94a95bctt2mi7ddjaiq"
+      }
     }
   }
 }

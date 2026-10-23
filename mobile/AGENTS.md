@@ -25,8 +25,15 @@ Run lint and typecheck before declaring any task done.
 
 ## Navigation & Routing
 
-- The navigation library is **not decided yet** (open decision in `../docs/plan.md`). Don't add Expo Router, React Navigation or any other navigator until a row in `../docs/decisions.md` picks one.
-- Expo Router is the likely candidate: https://docs.expo.dev/router/introduction.md
+- Use **Expo Router** for all navigation (decision 35). Routes live in `src/app/` — every file there is a screen, `_layout.tsx` files define navigators. Keep non-route code (components, hooks, utils) outside `src/app/`.
+- Import `Link`, `router`, and `useLocalSearchParams` from `expo-router`.
+- Docs: https://docs.expo.dev/router/introduction.md
+
+## Local database
+
+- SQLite via `expo-sqlite` and Drizzle ORM (decision 36). Schema in `src/db/schema.ts`; after changing it run `npx drizzle-kit generate` and commit the generated `drizzle/` folder.
+- Screens never query tables directly: they call the functions in `src/data/`, which keeps the logging UI swappable (plan: "thin boundary").
+- Data-layer tests run in Node against `better-sqlite3` with the same schema and migrations; they can't use `expo-sqlite`, which needs a device.
 
 ## Building with EAS
 
